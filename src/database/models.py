@@ -14,9 +14,4 @@ class User(Base):
     id: Mapped[intpk]
     tg_id = mapped_column(BigInteger)
     name: Mapped[str]
-
-
-# class Theatre(Base):
-#     __tablename__ = 'theatres'
-
-#     id: Mapped[intpk]
+    phone: Mapped[str] = mapped_column(nullable=True)

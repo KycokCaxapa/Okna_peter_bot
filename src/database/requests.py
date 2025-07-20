@@ -11,5 +11,12 @@ async def user_in_db(tg_id: int) -> bool:
 
 async def add_user(tg_id: int, name: str) -> None:
     async with async_session() as session:
-        session.add(User(tg_id=tg_id, name=name))
+        session.add(User(tg_id=tg_id,
+                         name=name,
+                         phone=None))
+        await session.commit()
+
+async def update_user(tg_id: int, **kwargs) -> None:
+    async with async_session() as session:
+        await session.execute(update(User).where(User.tg_id == tg_id).values(kwargs))
         await session.commit()

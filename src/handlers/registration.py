@@ -12,8 +12,9 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: Message) -> None:
     tg_id = message.from_user.id
+    full_name = message.from_user.full_name
     if not await user_in_db(tg_id):
-        await add_user(tg_id, message.from_user.full_name)
+        await add_user(tg_id, full_name)
         await message.answer(f'Приветствую...\nБлаблабла\nБимбимбамбам',
                              reply_markup=keyboards.main_kb)
     else:

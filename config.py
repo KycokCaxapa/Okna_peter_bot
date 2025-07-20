@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     def model_post_init(self, __context):
         if not self.DB_URL:
-            self.DB_URL = f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+            self.DB_URL = f'postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
 
     class Config:
         env_file = '.env'

@@ -4,13 +4,15 @@ import asyncio
 import logging
 
 from src.handlers.registration import router as registration_router
+from src.handlers.buttons import router as buttons_router
 from config import settings
 
 
 async def main() -> None:
     bot = Bot(token=settings.TOKEN)
     dp = Dispatcher()
-    dp.include_routers(registration_router)
+    dp.include_routers(registration_router,
+                       buttons_router)
     await dp.start_polling(bot)
 
 
