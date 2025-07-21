@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 
 from src.database.database import async_session
-from src.database.models import User
+from src.database.models import User, Admin
 
 
 async def user_in_db(tg_id: int) -> bool:
@@ -9,6 +9,13 @@ async def user_in_db(tg_id: int) -> bool:
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         return True if user else False
+
+
+async def get_admins() -> list[int]:
+    '''Get all tg IDs of admins'''
+    async with async_session() as session:
+        admins = await session.scalars(select(Admin.tg_id))
+        return admins
 
 
 async def add_user(tg_id: int, name: str) -> None:

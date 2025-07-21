@@ -1,0 +1,99 @@
+# Byte-compiled / optimized / DLL files
+pycache/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# VS Code settings
+.vscode/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Pytest cache
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pydantic settings
+.env
+.env.*
+
+# Alembic migrations (optional — если не хочешь миграции в репо)
+# migrations/versions/
+
+# SQLite or other local DB
+migrations/
+*.sqlite3
+*.ini
+*.db
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor backup files
+*.swp
+*.swo
+
+# Python egg
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+pypackages/
+
+# Wheels
+*.whl
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Profiling data
+*.prof
+
+# VS Code launch/debug
+*.code-workspace
+
+# Pyre type checker
+.pyre/
