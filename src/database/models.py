@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger
+from sqlalchemy import BigInteger, Enum
 from typing import Annotated
+
+import enum
 
 from src.database.database import Base
 
@@ -18,8 +20,18 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(default=False, nullable=False)
 
 
-class Admin(Base):
-    __tablename__ = 'admins'
+class PhotoCategory(enum.Enum):
+    windows = 'windows'
+    ceilings = 'ceilings'
+    mosquito = 'mosquito'
+    blinds = 'blinds'
+    roller = 'roller'
+
+
+class Photo(Base):
+    __tablename__ = 'photos'
 
     id: Mapped[intpk]
-    tg_id = mapped_column(BigInteger, nullable=False, unique=True)
+    photo_id: Mapped[str] = mapped_column(nullable=False, unique=True)
+    category: Mapped[str] = mapped_column(Enum(PhotoCategory))
+    description: Mapped[str]

@@ -4,6 +4,7 @@ import asyncio
 import logging
 
 from src.handlers.registration import router as registration_router
+from src.handlers.admin import router as admin_router
 from src.handlers.menu import router as menu_router
 from config import settings
 
@@ -11,7 +12,8 @@ from config import settings
 async def main() -> None:
     bot = Bot(token=settings.TOKEN)
     dp = Dispatcher()
-    dp.include_routers(registration_router,
+    dp.include_routers(admin_router,
+                       registration_router,
                        menu_router)
     await dp.start_polling(bot)
 
