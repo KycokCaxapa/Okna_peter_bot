@@ -3,6 +3,7 @@ from aiogram.types import Message
 from aiogram import Router
 
 from src.database.requests import add_user, is_admin, user_in_db
+
 import src.keyboards as keyboards
 
 
@@ -17,10 +18,7 @@ async def cmd_start(message: Message) -> None:
     if not await user_in_db(tg_id):
         await add_user(tg_id, full_name)
         await message.answer(f'Приветствую...\nБлаблабла\nБимбимбамбам',
-                             reply_markup=keyboards.main_kb())
-    elif await is_admin(tg_id):
-        await message.answer(f'Чур ты админ',
-                             reply_markup=keyboards.main_kb(is_admin=True))
+                             reply_markup=keyboards.main_kb)
     else:
         await message.answer('Выберите действие',
-                             reply_markup=keyboards.main_kb())
+                             reply_markup=keyboards.main_kb)

@@ -17,7 +17,7 @@ FAQ = load_text('faq.txt')
 async def btn_gallery(message: Message) -> None:
     '''Handle click on the gallery button'''
     await message.answer('Выберите категорию нашей продукции, которую хотите изучить',
-                         reply_markup=keyboards.category_kb())
+                         reply_markup=keyboards.category_ikb())
 
 
 @router.callback_query(F.data.startswith('gallery_'))
@@ -34,7 +34,7 @@ async def btn_gallery_category(callback: CallbackQuery) -> None:
         await callback.message.answer_photo(
                 photo=photos[page].photo_id,
                 caption=photos[page].description,
-                reply_markup=keyboards.pagination_kb(category, page, count)
+                reply_markup=keyboards.pagination_ikb(category, page, count)
                 )
     else:
         await callback.message.answer('Галерея пуста((')
@@ -53,7 +53,7 @@ async def pagination_callback(callback: CallbackQuery):
     await callback.message.edit_media(
         InputMediaPhoto(media=photos[page].photo_id,
                         caption=photos[page].description),
-        reply_markup=keyboards.pagination_kb(category, page, count)
+        reply_markup=keyboards.pagination_ikb(category, page, count)
     )
 
 
@@ -68,7 +68,7 @@ async def btn_back_to_category(callback: CallbackQuery) -> None:
     '''Handle click on the back to category button'''
     await callback.answer()
     await callback.message.answer('Выберите категорию нашей продукции, которую хотите изучить',
-                                  reply_markup=keyboards.category_kb())
+                                  reply_markup=keyboards.category_ikb())
 
 
 @router.message(F.text == '👋 Консультация')
@@ -99,7 +99,7 @@ async def get_contact(message: Message) -> None:
 async def btn_back_from_phone(message: Message) -> None:
     '''Handle click on the back button in send phone action'''
     await message.answer('Выберите действие.',
-                         reply_markup=keyboards.main_kb())
+                         reply_markup=keyboards.main_kb)
 
 
 @router.message(F.text == '📍 Навигация')

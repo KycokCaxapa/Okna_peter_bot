@@ -1,9 +1,10 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-from aiogram import F, Router
+from aiogram import Router, F
 
 from src.database.requests import add_photo
 from src.states import GalleryState
+
 import src.keyboards as keyboards
 
 
@@ -16,7 +17,7 @@ async def btn_add_photo(message: Message,
     '''Handle add photo button'''
     await state.set_state(GalleryState.category)
     await message.answer('Выберите категорию для добавления фото:',
-                         reply_markup=keyboards.category_kb(is_admin=True))
+                         reply_markup=keyboards.category_ikb(is_admin=True))
 
 
 @router.callback_query(F.data.startswith('admin_gallery'))
@@ -27,7 +28,8 @@ async def choose_category(callback: CallbackQuery,
     await callback.answer()
     await state.update_data(category=category)
     await state.set_state(GalleryState.photo_id)
-    await callback.message.answer('Теперь отправьте мне фото')
+    await callback.message.answer('Теперь отправьте мне фото',
+                                  reply_markup=keyboards.cancel_ikb)
 
 
 @router.message(GalleryState.photo_id, F.photo)
@@ -37,7 +39,8 @@ async def receive_photo(message: Message,
     photo_id = message.photo[-1].file_id
     await state.update_data(photo_id=photo_id)
     await state.set_state(GalleryState.description)
-    await message.answer('Теперь напиши описание для фото')
+    await message.answer('Теперь напиши описание для фото',
+                         reply_markup=keyboards.cancel_ikb)
 
 
 @router.message(GalleryState.description, F.text)

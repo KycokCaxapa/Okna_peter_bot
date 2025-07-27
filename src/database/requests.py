@@ -4,13 +4,6 @@ from src.database.database import async_session
 from src.database.models import User, Photo
 
 
-async def user_in_db(tg_id: int) -> bool:
-    '''Check if user exists in the DB by tg ID'''
-    async with async_session() as session:
-        user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        return True if user else False
-
-
 async def is_admin(tg_id: int) -> bool:
     '''Check admin by tg ID'''
     async with async_session() as session:
@@ -25,6 +18,13 @@ async def get_admins_tg_id() -> list[int]:
         return admins
 
 
+async def user_in_db(tg_id: int) -> bool:
+    '''Check if user exists in the DB by tg ID'''
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        return True if user else False
+
+
 async def add_user(tg_id: int, name: str) -> None:
     '''Add new user to the DB'''
     async with async_session() as session:
@@ -32,6 +32,13 @@ async def add_user(tg_id: int, name: str) -> None:
                          name=name,
                          phone=None))
         await session.commit()
+
+
+async def get_all_users() -> list[User]:
+    '''Get all users'''
+    async with async_session() as session:
+        users = await session.scalars(select(User))
+        return list(users)
 
 
 async def update_user(tg_id: int, **kwargs) -> None:

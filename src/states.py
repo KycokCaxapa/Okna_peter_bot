@@ -6,3 +6,7 @@ class GalleryState(StatesGroup):
     category = State()
     photo_id = State()
     description = State()
+
+class StockState(StatesGroup):
+    '''Stock state for spam'''
+    content = State()
