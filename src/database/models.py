@@ -1,5 +1,5 @@
+from sqlalchemy import ARRAY, BigInteger, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger, Enum
 from typing import Annotated
 
 import enum
@@ -18,6 +18,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(default='', nullable=False)
     phone: Mapped[str] = mapped_column(nullable=True)
     is_admin: Mapped[bool] = mapped_column(default=False, nullable=False)
+    options: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
 
 
 class PhotoCategory(enum.Enum):

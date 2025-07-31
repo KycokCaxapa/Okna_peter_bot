@@ -37,11 +37,12 @@ async def receive_stock_text(message: Message,
     '''Save stock description and ask for confirm'''
     await state.update_data(message_id=message.message_id,
                             chat_id=message.chat.id)
+    await state.set_state(StockState.confirm)
     await message.answer('❓ Вы уверены, что хотите разослать это сообщение всем пользователям?',
                          reply_markup=keyboards.confirm_ikb)
     
 
-@router.callback_query(F.data == 'confirm_spam_action')
+@router.callback_query(StockState.confirm, F.data == 'confirm_spam_action')
 async def confirm_spam_action(callback: CallbackQuery,
                               state: FSMContext,
                               bot: Bot) -> None:
@@ -67,4 +68,3 @@ async def confirm_spam_action(callback: CallbackQuery,
 
     await callback.message.answer(f'👌 Рассылка завершена. Столько пользователей получили сообщение: {score}')
     await state.clear()
-

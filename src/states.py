@@ -7,6 +7,15 @@ class GalleryState(StatesGroup):
     photo_id = State()
     description = State()
 
+
 class StockState(StatesGroup):
     '''Stock state for spam'''
     content = State()
+    confirm = State()
+
+
+class VoteState(StatesGroup):
+    '''Vote state for spam'''
+    question = State()
+    options = State()
+    confirm = State()
