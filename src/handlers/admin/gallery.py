@@ -35,9 +35,20 @@ async def choose_category(callback: CallbackQuery,
 @router.message(GalleryState.photo_id, F.photo)
 async def receive_photo(message: Message,
                         state: FSMContext) -> None:
-    '''Save photo ID and ask for description'''
+    '''Save photo ID and ask for title'''
     photo_id = message.photo[-1].file_id
     await state.update_data(photo_id=photo_id)
+    await state.set_state(GalleryState.title)
+    await message.answer('Теперь напиши название фото',
+                         reply_markup=keyboards.cancel_ikb)
+
+
+@router.message(GalleryState.title, F.text)
+async def receive_title(message: Message,
+                        state: FSMContext) -> None:
+    '''Save photo title and ask for description'''
+    title = message.text
+    await state.update_data(title=title)
     await state.set_state(GalleryState.description)
     await message.answer('Теперь напиши описание для фото',
                          reply_markup=keyboards.cancel_ikb)
@@ -52,11 +63,12 @@ async def receive_description(message: Message,
     await state.set_state(GalleryState.description)
 
     data = await state.get_data()
+    title = data.get('title')
     category = data.get('category')
     photo_id = data.get('photo_id')
     description = data.get('description')
 
-    await add_photo(photo_id, category, description)
+    await add_photo(title, photo_id, category, description)
 
     await message.answer('Фото успешно добавлено в галерею ✅')
     await state.clear()

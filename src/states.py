@@ -5,6 +5,7 @@ class GalleryState(StatesGroup):
     '''Photo state for gallery'''
     category = State()
     photo_id = State()
+    title = State()
     description = State()
 
 

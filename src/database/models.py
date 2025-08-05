@@ -33,6 +33,7 @@ class Photo(Base):
     __tablename__ = 'photos'
 
     id: Mapped[intpk]
+    title: Mapped[str] = mapped_column(nullable=True)
     photo_id: Mapped[str] = mapped_column(nullable=False, unique=True)
     category: Mapped[str] = mapped_column(Enum(PhotoCategory))
     description: Mapped[str]

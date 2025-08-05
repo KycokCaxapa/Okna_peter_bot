@@ -48,14 +48,16 @@ async def update_user(tg_id: int, **kwargs) -> None:
         await session.commit()
 
 
-async def add_photo(photo_id: str,
+async def add_photo(title:str,
+                    photo_id: str,
                     category: str,
                     description: str) -> None:
     '''Add new photo to the DB'''
     async with async_session() as session:
-        session.add(Photo(photo_id=photo_id,
-                            category=category,
-                            description=description))
+        session.add(Photo(title=title,
+                          photo_id=photo_id,
+                          category=category,
+                          description=description))
         await session.commit()
 
 

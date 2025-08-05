@@ -1,4 +1,5 @@
 from aiogram.types import Message, CallbackQuery, InputMediaPhoto
+from aiogram.fsm.context import FSMContext
 from aiogram import F, Router
 
 from src.database.requests import (get_admins_tg_id, get_photos_by_category,
@@ -31,9 +32,10 @@ async def btn_gallery_category(callback: CallbackQuery) -> None:
     page = 0
 
     if photos:
+        caption = f'{photos[page].title}\n{photos[page].description}'
         await callback.message.answer_photo(
                 photo=photos[page].photo_id,
-                caption=photos[page].description,
+                caption=caption,
                 reply_markup=keyboards.pagination_ikb(category, page, count)
                 )
     else:
@@ -48,11 +50,13 @@ async def pagination_callback(callback: CallbackQuery):
     action, category, page = callback.data.split('_')
     page = int(page) + 1 if action == 'next' else int(page) - 1
     photos = await get_photos_by_category(category)
+    caption = f'{photos[page].title}\n{photos[page].description}'
     count = len(photos)
+
 
     await callback.message.edit_media(
         InputMediaPhoto(media=photos[page].photo_id,
-                        caption=photos[page].description),
+                        caption=caption),
         reply_markup=keyboards.pagination_ikb(category, page, count)
     )
 
@@ -61,6 +65,19 @@ async def pagination_callback(callback: CallbackQuery):
 async def btn_current_page(callback: CallbackQuery) -> None:
     '''Handle click on the current page button'''
     await callback.answer('Вы ничего этим не добьётесь')
+
+
+@router.callback_query(F.data.startswith('want'))
+async def btn_want(callback: CallbackQuery,
+                   state: FSMContext) -> None:
+    '''Handle click on the want ibutton'''
+    await callback.answer()
+
+    _, category, page = callback.data.split('_')
+    await state.update_data(category=category,
+                            page=page)
+    await callback.message.answer('Отправьте свой номер телефона, нажав на кнопку ниже, чтобы менеджер смог с вами связаться',
+                                  reply_markup=keyboards.phone_kb)
 
 
 @router.callback_query(F.data == 'back_to_category')
@@ -79,17 +96,38 @@ async def btn_order(message: Message) -> None:
 
 
 @router.message(F.contact)
-async def get_contact(message: Message) -> None:
+async def get_contact(message: Message,
+                      state: FSMContext) -> None:
     '''Handle the phone number sent from user and send it to admins'''
     tg_id = message.from_user.id
     fullname = message.from_user.full_name
     phone = message.contact.phone_number
     admins = await get_admins_tg_id()
     chat_id = message.chat.id
-    order = f'Новая заявка: <a href="tg://openmessage?user_id={chat_id}">{fullname}</a>, <code>+{phone}</code>'
+
+    data = await state.get_data()
+    
+
+    if data:    #"or" because the page can be 0 (None) 😮🤯
+        category = data.get('category')
+        page = int(data.get('page') if data else None)
+
+        photos = await get_photos_by_category(category)
+        order = (
+            f'Новая заявка по галерее:\n'
+            f'Запрос: {photos[page].title}\n'
+            f'Пользователь: <a href="tg://openmessage?user_id={chat_id}">{fullname}</a>\n'
+            f'Номер: <code>+{phone}</code>'
+        )
+        await message.answer('✅ Ваш запрос по товару получен. Менеджер свяжется с вами!')
+        await state.clear()
+    else:
+        order = f'Новая заявка: <a href="tg://openmessage?user_id={chat_id}">{fullname}</a>, <code>+{phone}</code>'
+        await message.answer('✅ Спасибо! Мы свяжемся с вами.')
 
     await update_user(tg_id, phone=phone)
-    await message.answer(f'Мы украли ваш номер телефона')
+    await message.answer(f'Мы украли ваш номер телефона',
+                         reply_markup=keyboards.main_kb)
 
     for admin in admins:
         await message.bot.send_message(admin, order, parse_mode='HTML')

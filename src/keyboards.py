@@ -95,8 +95,9 @@ def pagination_ikb(category: str,
     if page + 1 != count:
         keyboard.append(InlineKeyboardButton(text='▶️',
                                             callback_data=f'next_{category}_{page}'))
-    
+    want = InlineKeyboardButton(text='😮😮 Хочу!!',
+                                 callback_data=f'want_{category}_{page}')
     back = InlineKeyboardButton(text='◀️ Назад к категориям',
                                         callback_data='back_to_category')
 
-    return InlineKeyboardMarkup(inline_keyboard=[keyboard, [back]])
+    return InlineKeyboardMarkup(inline_keyboard=[keyboard, [want], [back]])
