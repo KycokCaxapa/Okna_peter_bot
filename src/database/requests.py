@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 
 from src.database.database import async_session
-from src.database.models import User, Photo
+from src.database.models import User, Gallery
 
 
 async def is_admin(tg_id: int) -> bool:
@@ -48,21 +48,23 @@ async def update_user(tg_id: int, **kwargs) -> None:
         await session.commit()
 
 
-async def add_photo(title:str,
-                    photo_id: str,
+async def add_media(title:str,
+                    media_id: str,
+                    media_type: str,
                     category: str,
                     description: str) -> None:
     '''Add new photo to the DB'''
     async with async_session() as session:
-        session.add(Photo(title=title,
-                          photo_id=photo_id,
-                          category=category,
-                          description=description))
+        session.add(Gallery(title=title,
+                            media_id=media_id,
+                            media_type=media_type,
+                            category=category,
+                            description=description))
         await session.commit()
 
 
-async def get_photos_by_category(category: str) -> list[Photo]:
-    '''Get list of photos by category'''
+async def get_medias_by_category(category: str) -> list[Gallery]:
+    '''Get list of media by category'''
     async with async_session() as session:
-        photos = await session.scalars(select(Photo).where(Photo.category == category))
-        return list(photos)
+        medias = await session.scalars(select(Gallery).where(Gallery.category == category))
+        return list(medias)

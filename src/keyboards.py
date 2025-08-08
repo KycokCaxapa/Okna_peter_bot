@@ -2,8 +2,8 @@ from aiogram.types import (ReplyKeyboardMarkup, InlineKeyboardMarkup,
                            KeyboardButton, InlineKeyboardButton)
 
 
-add_photo_btn = KeyboardButton(text='🖼️ Добавить фото в галерею')
-gallery_btn = KeyboardButton(text='🖼️ Фотогалерея')
+add_photo_btn = KeyboardButton(text='🖼️ Пополнить галерею')
+gallery_btn = KeyboardButton(text='🖼️ Галерея')
 order_btn = KeyboardButton(text='👋 Консультация')
 nav_btn = KeyboardButton(text='📍 Навигация')
 faq_btn = KeyboardButton(text='❓ Ответы на часто задаваемые вопросы')
@@ -75,7 +75,7 @@ def category_ikb(is_admin: bool = False) -> None:
             [
                 InlineKeyboardButton(text='🧵 Рулонные шторы', callback_data=f'{'admin_' if is_admin else ''}gallery_roller'),
             ],
-            [cancel_ibtn]
+            [cancel_ibtn] if is_admin else []
         ]
     )
 

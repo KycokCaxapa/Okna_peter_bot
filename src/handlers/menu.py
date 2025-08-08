@@ -1,8 +1,8 @@
-from aiogram.types import Message, CallbackQuery, InputMediaPhoto
+from aiogram.types import Message, CallbackQuery, InputMediaPhoto, InputMediaVideo
 from aiogram.fsm.context import FSMContext
 from aiogram import F, Router
 
-from src.database.requests import (get_admins_tg_id, get_photos_by_category,
+from src.database.requests import (get_admins_tg_id, get_medias_by_category,
                                    update_user)
 from src.texts import load_text
 
@@ -14,7 +14,7 @@ NAVIGATION = load_text('navigation.txt')
 FAQ = load_text('faq.txt')
 
 
-@router.message(F.text == '🖼️ Фотогалерея')
+@router.message(F.text == '🖼️ Галерея')
 async def btn_gallery(message: Message) -> None:
     '''Handle click on the gallery button'''
     await message.answer('Выберите категорию нашей продукции, которую хотите изучить',
@@ -27,17 +27,24 @@ async def btn_gallery_category(callback: CallbackQuery) -> None:
     await callback.answer()
 
     category = callback.data.split('_')[-1]
-    photos = await get_photos_by_category(category)
-    count = len(photos)
+    medias = await get_medias_by_category(category)
+    count = len(medias)
     page = 0
 
-    if photos:
-        caption = f'{photos[page].title}\n{photos[page].description}'
-        await callback.message.answer_photo(
-                photo=photos[page].photo_id,
+    if medias:
+        caption = f'{medias[page].title}\n{medias[page].description}'
+        if medias[page].media_type.value == 'photo':
+            await callback.message.answer_photo(
+                photo=medias[page].media_id,
+                caption=caption,
+                reply_markup=keyboards.pagination_ikb(category, page,count)
+            )
+        if medias[page].media_type.value == 'video':
+            await callback.message.answer_video(
+                video=medias[page].media_id,
                 caption=caption,
                 reply_markup=keyboards.pagination_ikb(category, page, count)
-                )
+            )
     else:
         await callback.message.answer('Галерея пуста((')
 
@@ -49,16 +56,22 @@ async def pagination_callback(callback: CallbackQuery):
 
     action, category, page = callback.data.split('_')
     page = int(page) + 1 if action == 'next' else int(page) - 1
-    photos = await get_photos_by_category(category)
-    caption = f'{photos[page].title}\n{photos[page].description}'
-    count = len(photos)
+    medias = await get_medias_by_category(category)
+    caption = f'{medias[page].title}\n{medias[page].description}'
+    count = len(medias)
 
-
-    await callback.message.edit_media(
-        InputMediaPhoto(media=photos[page].photo_id,
-                        caption=caption),
-        reply_markup=keyboards.pagination_ikb(category, page, count)
-    )
+    if medias[page].media_type.value == 'photo':
+        await callback.message.edit_media(
+            InputMediaPhoto(media=medias[page].media_id,
+                            caption=caption),
+            reply_markup=keyboards.pagination_ikb(category, page, count)
+        )
+    if medias[page].media_type.value == 'video':
+        await callback.message.edit_media(
+            InputMediaVideo(media=medias[page].media_id,
+                            caption=caption),
+            reply_markup=keyboards.pagination_ikb(category, page, count)
+        )
 
 
 @router.callback_query(F.data == 'current_page')
@@ -107,12 +120,11 @@ async def get_contact(message: Message,
 
     data = await state.get_data()
     
-
-    if data:    #"or" because the page can be 0 (None) 😮🤯
+    if data:
         category = data.get('category')
         page = int(data.get('page') if data else None)
 
-        photos = await get_photos_by_category(category)
+        photos = await get_medias_by_category(category)
         order = (
             f'Новая заявка по галерее:\n'
             f'Запрос: {photos[page].title}\n'

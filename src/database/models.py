@@ -21,7 +21,7 @@ class User(Base):
     options: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=True)
 
 
-class PhotoCategory(enum.Enum):
+class GalleryCategory(enum.Enum):
     windows = 'windows'
     ceilings = 'ceilings'
     mosquito = 'mosquito'
@@ -29,11 +29,18 @@ class PhotoCategory(enum.Enum):
     roller = 'roller'
 
 
-class Photo(Base):
-    __tablename__ = 'photos'
+class MediaType(enum.Enum):
+    photo = 'photo'
+    video = 'video'
+
+
+class Gallery(Base):
+    __tablename__ = 'gallery'
 
     id: Mapped[intpk]
-    title: Mapped[str] = mapped_column(nullable=True)
-    photo_id: Mapped[str] = mapped_column(nullable=False, unique=True)
-    category: Mapped[str] = mapped_column(Enum(PhotoCategory))
+    title: Mapped[str] = mapped_column(nullable=False)
+    media_id: Mapped[str] = mapped_column(nullable=False, unique=True)
+    media_type: Mapped[str] = mapped_column(Enum(MediaType), name='media_type', nullable=True)
+    category: Mapped[str] = mapped_column(Enum(GalleryCategory),
+                                          name='category')
     description: Mapped[str]
