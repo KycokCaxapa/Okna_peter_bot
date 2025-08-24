@@ -23,7 +23,10 @@ class User(Base):
 
 class GalleryCategory(enum.Enum):
     windows = 'windows'
+    balconies = 'balconies'
+    restoration = 'restoration'
     ceilings = 'ceilings'
+    spp = 'spp'
     mosquito = 'mosquito'
     blinds = 'blinds'
     roller = 'roller'
@@ -40,7 +43,6 @@ class Gallery(Base):
     id: Mapped[intpk]
     title: Mapped[str] = mapped_column(nullable=False)
     media_id: Mapped[str] = mapped_column(nullable=False, unique=True)
-    media_type: Mapped[str] = mapped_column(Enum(MediaType), name='media_type', nullable=True)
-    category: Mapped[str] = mapped_column(Enum(GalleryCategory),
-                                          name='category')
+    media_type: Mapped[str] = mapped_column(Enum(MediaType), name='media_type')
+    category: Mapped[str] = mapped_column(Enum(GalleryCategory), name='category')
     description: Mapped[str]

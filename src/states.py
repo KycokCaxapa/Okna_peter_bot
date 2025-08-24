@@ -9,6 +9,14 @@ class GalleryState(StatesGroup):
     description = State()
 
 
+class EditState(StatesGroup):
+    '''Edit media state for gallery'''
+    title = State()
+    description = State()
+    media = State()
+    delete = State()
+
+
 class StockState(StatesGroup):
     '''Stock state for spam'''
     content = State()

@@ -21,7 +21,7 @@ async def btn_gallery(message: Message) -> None:
                          reply_markup=keyboards.category_ikb())
 
 
-@router.callback_query(F.data.startswith('gallery_'))
+@router.callback_query(F.data.startswith('gallery'))
 async def btn_gallery_category(callback: CallbackQuery) -> None:
     '''Handle click on the category from gallery menu'''
     await callback.answer()
@@ -32,12 +32,12 @@ async def btn_gallery_category(callback: CallbackQuery) -> None:
     page = 0
 
     if medias:
-        caption = f'{medias[page].title}\n{medias[page].description}'
+        caption = f'{medias[page].title}\n\n{medias[page].description}'
         if medias[page].media_type.value == 'photo':
             await callback.message.answer_photo(
                 photo=medias[page].media_id,
                 caption=caption,
-                reply_markup=keyboards.pagination_ikb(category, page,count)
+                reply_markup=keyboards.pagination_ikb(category, page, count)
             )
         if medias[page].media_type.value == 'video':
             await callback.message.answer_video(
@@ -57,7 +57,7 @@ async def pagination_callback(callback: CallbackQuery):
     action, category, page = callback.data.split('_')
     page = int(page) + 1 if action == 'next' else int(page) - 1
     medias = await get_medias_by_category(category)
-    caption = f'{medias[page].title}\n{medias[page].description}'
+    caption = f'{medias[page].title}\n\n{medias[page].description}'
     count = len(medias)
 
     if medias[page].media_type.value == 'photo':

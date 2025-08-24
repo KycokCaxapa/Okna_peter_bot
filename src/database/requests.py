@@ -63,6 +63,21 @@ async def add_media(title:str,
         await session.commit()
 
 
+async def update_media(id: str, **kwargs) -> None:
+    '''Update media fields by media ID'''
+    async with async_session() as session:
+        await session.execute(update(Gallery).where(Gallery.media_id == id).values(kwargs))
+        await session.commit()
+
+
+async def delete_media(id: str) -> None:
+    '''Delete media by media ID'''
+    async with async_session() as session:
+        media = await session.scalar(select(Gallery).where(Gallery.media_id == id))
+        await session.delete(media)
+        await session.commit()
+
+
 async def get_medias_by_category(category: str) -> list[Gallery]:
     '''Get list of media by category'''
     async with async_session() as session:

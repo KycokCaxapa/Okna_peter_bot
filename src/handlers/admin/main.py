@@ -25,8 +25,9 @@ async def cmd_admin(message: Message) -> None:
 
 @router.callback_query(F.data == 'cancel_action')
 async def cancel_action(callback: CallbackQuery,
-                          state: FSMContext) -> None:
-    '''Cancel add photo action'''
+                        state: FSMContext) -> None:
+    '''Cancel add media action'''
     await callback.answer()
     await state.clear()
-    await callback.message.answer('👌 Действие отменено')
+    await callback.message.answer('👌 Действие отменено',
+                                  reply_markup=keyboards.admin_kb)
